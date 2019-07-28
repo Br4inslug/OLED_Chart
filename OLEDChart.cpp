@@ -11,8 +11,6 @@
 #error("Height incorrect, change Adafruit_SSD1306.h");
 #endif
 
-
-
 OLED_Chart::OLED_Chart() {
 	// TODO Auto-generated constructor stub
 
@@ -22,10 +20,11 @@ OLED_Chart::~OLED_Chart() {
 	// TODO Auto-generated destructor stub
 }
 
-OLED_Chart::OLED_Chart(uint8_t screenHight, uint8_t screenWidth, int arR[],int Size):display(screenWidth,screenHight, &Wire, oledreset) {
-screenhight=screenHight;
-screenwidth=screenWidth;
-size=Size;
+OLED_Chart::OLED_Chart(uint8_t screenHight, uint8_t screenWidth, int arR[], int Size) :
+		display(screenWidth, screenHight, &Wire, oledreset) {
+	screenhight = screenHight;
+	screenwidth = screenWidth;
+	size = Size;
 
 }
 
@@ -34,33 +33,69 @@ void OLED_Chart::init() {
 	display.clearDisplay();
 }
 
-
 void OLED_Chart::drawDataLine() {
 	display.clearDisplay();
-	drawcoordinates();
-	int YZero1 = screenhight / 2;
+	int YZero1 ;;
 	float max = findMax();
 	float min = findMin();
 	float biggest;
-	if (max >= abs(min)) {
-		biggest = max;
+
+	if (min >= 0) {
+		 YZero1 = screenhight ;
+		drawcoordinatesPositive();
+		if (max >= abs(min)) {
+			biggest = max;
+		} else {
+			biggest = abs(min);
+		}
+
+		float divisor = biggest / ((screenhight ) - 2);
+
+		int step = screenwidth / (size - 1);
+
+		for (int i = 0; i < size - 1; i++) {
+
+			int y1 = (floor(arr[i] / divisor) * -1) + YZero1;
+			int y2 = (floor(arr[i + 1] / divisor) * -1) + YZero1;
+			if (min >= 0) {
+				drawcoordinatesPositive();
+			} else {
+				drawcoordinates();
+			}
+
+			display.drawLine(i * step, y1, (i + 1) * step, y2, WHITE);
+
+		}
+		display.display();
 	} else {
-		biggest = abs(min);
+		 YZero1 = screenhight / 2;
+		drawcoordinates();
+		if (max >= abs(min)) {
+			biggest = max;
+		} else {
+			biggest = abs(min);
+		}
+
+		float divisor = biggest / ((screenhight / 2) - 2);
+
+		int step = screenwidth / (size - 1);
+
+		for (int i = 0; i < size - 1; i++) {
+
+			int y1 = (floor(arr[i] / divisor) * -1) + YZero1;
+			int y2 = (floor(arr[i + 1] / divisor) * -1) + YZero1;
+			if (min >= 0) {
+				drawcoordinatesPositive();
+			} else {
+				drawcoordinates();
+			}
+
+			display.drawLine(i * step, y1, (i + 1) * step, y2, WHITE);
+
+		}
+		display.display();
 	}
 
-	float divisor = biggest / ((screenhight / 2)-2);
-
-	int step = screenwidth / (size - 1);
-
-	for (int i = 0; i < size - 1; i++) {
-
-		int y1 = (floor(arr[i] / divisor) * -1) + YZero1;
-		int y2 = (floor(arr[i + 1] / divisor) * -1) + YZero1;
-
-		display.drawLine(i * step, y1, (i + 1) * step, y2, WHITE);
-
-	}
-	display.display();
 }
 
 void OLED_Chart::drawcoordinates() {
@@ -79,6 +114,24 @@ void OLED_Chart::drawcoordinates() {
 	display.drawLine(widthquarter * 2, middle - 3, widthquarter * 2, middle + 3, WHITE);
 	display.drawLine(widthquarter * 3, middle - 3, widthquarter * 3, middle + 3, WHITE);
 	display.drawLine(widthquarter * 4, middle - 3, widthquarter * 4, middle + 3, WHITE);
+}
+
+void OLED_Chart::drawcoordinatesPositive() {
+	int middle = screenhight / 2;
+	int hightquarter = screenhight / 4;
+
+	int widthquarter = screenwidth / 4;
+
+	display.drawLine(0, screenhight - 1, screenwidth, screenhight - 1, WHITE);
+	display.drawLine(0, hightquarter, screenwidth / 26, hightquarter, WHITE);
+	display.drawLine(0, hightquarter * 3, screenwidth / 26, hightquarter * 3, WHITE);
+	display.drawLine(0, hightquarter * 2, screenwidth / 26, hightquarter * 2, WHITE);
+
+	display.drawLine(0, 0, 0, 96, WHITE);
+	display.drawLine(widthquarter, screenhight, widthquarter, screenhight - 3, WHITE);
+	display.drawLine(widthquarter * 2, screenhight, widthquarter * 2, screenhight - 3, WHITE);
+	display.drawLine(widthquarter * 3, screenhight, widthquarter * 3, screenhight - 3, WHITE);
+	display.drawLine(widthquarter * 4, screenhight, widthquarter * 4, screenhight - 3, WHITE);
 }
 
 int OLED_Chart::findMax() {
