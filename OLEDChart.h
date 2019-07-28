@@ -22,7 +22,7 @@ public:
 	virtual ~OLED_Chart();
 	OLED_Chart(uint8_t screenHight, uint8_t screenWidth, int arR[], int Size);
 	void drawDataLine();
-	void drawDataLinePositive();
+	void drawDataLineFlexible();
 	void drawcoordinates();
 	void drawcoordinatesPositive();
 	int findMax();

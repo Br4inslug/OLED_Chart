@@ -33,15 +33,53 @@ void OLED_Chart::init() {
 	display.clearDisplay();
 }
 
+void OLED_Chart::drawDataLineFlexible() {
+	display.clearDisplay();
+
+	float max = findMax();
+	float min = findMin();
+	int maxi=max;
+	int mini=min;
+
+
+
+	drawcoordinatesPositive();
+
+	float divisor = abs(max - min) / screenhight;
+
+	int step = screenwidth / (size - 1);
+
+	for (int i = 0; i < size - 1; i++) {
+
+		int y1 = (floor(min - arr[i]) / divisor) + screenhight;
+		int y2 = (floor(min - arr[i + 1]) / divisor) + screenhight;
+
+		display.drawLine(i * step, y1, (i + 1) * step, y2, WHITE);
+
+	}
+	 display.setTextSize(1);
+
+	display.setTextColor(WHITE);
+
+	display.setCursor(20, 0);
+	display.print(mini);
+	display.print(" / ");
+	display.print(maxi);
+
+	display.display();
+
+}
+
 void OLED_Chart::drawDataLine() {
 	display.clearDisplay();
-	int YZero1 ;;
+	int YZero1;
+	;
 	float max = findMax();
 	float min = findMin();
 	float biggest;
 
 	if (min >= 0) {
-		 YZero1 = screenhight ;
+		YZero1 = screenhight;
 		drawcoordinatesPositive();
 		if (max >= abs(min)) {
 			biggest = max;
@@ -49,7 +87,7 @@ void OLED_Chart::drawDataLine() {
 			biggest = abs(min);
 		}
 
-		float divisor = biggest / ((screenhight ) - 2);
+		float divisor = biggest / ((screenhight) - 2);
 
 		int step = screenwidth / (size - 1);
 
@@ -68,7 +106,7 @@ void OLED_Chart::drawDataLine() {
 		}
 		display.display();
 	} else {
-		 YZero1 = screenhight / 2;
+		YZero1 = screenhight / 2;
 		drawcoordinates();
 		if (max >= abs(min)) {
 			biggest = max;
