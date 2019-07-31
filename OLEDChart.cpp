@@ -61,10 +61,11 @@ void OLED_Chart::drawDataLineFlexible() {
 
 	display.setTextColor(WHITE);
 
-	display.setCursor(20, 0);
-	display.print(mini);
-	display.print(" / ");
+	display.setCursor(10, 0);
 	display.print(maxi);
+	display.setCursor(10, 50);
+
+	display.print(mini);
 
 	display.display();
 
